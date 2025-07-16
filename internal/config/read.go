@@ -1,10 +1,5 @@
 package config
 
-import (
-	"encoding/json"
-	"os"
-)
-
 func Read() (Config, error) {
 
 	config := Config{}
@@ -15,21 +10,7 @@ func Read() (Config, error) {
 		return config, err
 	}
 
-	file, err := os.Open(configFileName)
-
-	if err != nil {
-		return config, err
-	}
-
-	defer file.Close()
-
-	decoder := json.NewDecoder(file)
-
-	err = decoder.Decode(&config)
-
-	if err != nil {
-		return config, err
-	}
+	err = config.decode(configFileName)
 
 	return config, err
 }
