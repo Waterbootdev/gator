@@ -40,7 +40,7 @@ func initializeOrExit() (state, commands) {
 
 	currentCommands := commands{}
 
-	currentCommands.registerAll()
+	currentCommands.registerHandlers()
 
 	return currentState, currentCommands
 }

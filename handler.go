@@ -88,7 +88,7 @@ func handleGetUsers(s *state, _ command) error {
 	return nil
 }
 
-func (c *commands) registerAll() {
+func (c *commands) registerHandlers() {
 
 	c.availableCommands = map[string]func(s *state, cmd command) error{}
 	c.register("login", handlerLogin)
