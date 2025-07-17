@@ -23,7 +23,15 @@ func getCommand() command {
 
 func initializeOrExit() (state, commands) {
 	currentState := state{}
+
 	err := currentState.setConfig()
+
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	currentState.setDBQueries()
 
 	if err != nil {
 		fmt.Println(err)
