@@ -21,8 +21,8 @@ func getCommand() command {
 	return cmd
 }
 
-func initializeOrExit() (*state, *commands) {
-	currentState := &state{}
+func initializeOrExit() (state, commands) {
+	currentState := state{}
 	err := currentState.setConfig()
 
 	if err != nil {
@@ -30,7 +30,7 @@ func initializeOrExit() (*state, *commands) {
 		os.Exit(1)
 	}
 
-	currentCommands := &commands{}
+	currentCommands := commands{}
 
 	currentCommands.registerAll()
 

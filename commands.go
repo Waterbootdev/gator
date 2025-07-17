@@ -1,5 +1,9 @@
 package main
 
+import (
+	"fmt"
+)
+
 type command struct {
 	name      string
 	arguments []string
@@ -13,7 +17,7 @@ func (c *commands) run(s *state, cmd command) error {
 	handler, ok := c.availableCommands[cmd.name]
 
 	if !ok {
-		return nil
+		return fmt.Errorf("command %s not found", cmd.name)
 	}
 
 	return handler(s, cmd)

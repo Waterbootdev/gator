@@ -9,7 +9,7 @@ func main() {
 
 	currentState, currentCommands := initializeOrExit()
 
-	err := currentCommands.run(currentState, getCommand())
+	err := currentCommands.run(&currentState, getCommand())
 
 	if err != nil {
 		fmt.Println(err)
