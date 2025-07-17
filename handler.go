@@ -67,10 +67,32 @@ func handleReset(s *state, _ command) error {
 	return s.DB.DeleteALLUsers(context.Background())
 }
 
+func handleGetUsers(s *state, _ command) error {
+
+	users, err := s.DB.GetUsers(context.Background())
+
+	if err != nil {
+		return err
+	}
+
+	curentUserName := s.Config.CurrentUserName
+
+	for _, user := range users {
+		if user.Name == curentUserName {
+			fmt.Println(user.Name, "(current)")
+		} else {
+			fmt.Println(user.Name)
+		}
+	}
+
+	return nil
+}
+
 func (c *commands) registerAll() {
 
 	c.availableCommands = map[string]func(s *state, cmd command) error{}
 	c.register("login", handlerLogin)
 	c.register("register", handleRegister)
 	c.register("reset", handleReset)
+	c.register("users", handleGetUsers)
 }
