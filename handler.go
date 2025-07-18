@@ -68,7 +68,7 @@ func handleReset(s *state, _ command) error {
 	return s.DB.DeleteALLUsers(context.Background())
 }
 
-func handleGetUsers(s *state, _ command) error {
+func handleGetUsers(s *state, _ command, user database.User) error {
 
 	users, err := s.DB.GetUsers(context.Background())
 
@@ -76,7 +76,7 @@ func handleGetUsers(s *state, _ command) error {
 		return err
 	}
 
-	curentUserName := s.Config.CurrentUserName
+	curentUserName := user.Name
 
 	for _, user := range users {
 		if user.Name == curentUserName {
@@ -111,13 +111,13 @@ func handlerAgg(s *state, cmd command) error {
 	return nil
 }
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 
 	if len(cmd.arguments) < 2 {
 		return errors.New("please provide a feedname and url")
 	}
 
-	user, err := s.DB.GetUser(context.Background(), s.Config.CurrentUserName)
+	user, err := s.DB.GetUser(context.Background(), user.Name)
 
 	if err != nil {
 		return err
@@ -176,13 +176,13 @@ func handlerFeeds(s *state, _ command) error {
 	return nil
 }
 
-func handlerFollow(s *state, cmd command) error {
+func handlerFollow(s *state, cmd command, user database.User) error {
 
 	if len(cmd.arguments) < 1 {
 		return errors.New("please provide url")
 	}
 
-	user, err := s.DB.GetUser(context.Background(), s.Config.CurrentUserName)
+	user, err := s.DB.GetUser(context.Background(), user.Name)
 
 	if err != nil {
 		return err
@@ -211,9 +211,9 @@ func handlerFollow(s *state, cmd command) error {
 
 	return nil
 }
-func handlerFollowing(s *state, cmd command) error {
+func handlerFollowing(s *state, cmd command, user database.User) error {
 
-	feeds, err := s.DB.GetFeedFollowsForUser(context.Background(), s.Config.CurrentUserName)
+	feeds, err := s.DB.GetFeedFollowsForUser(context.Background(), user.Name)
 
 	if err != nil {
 		return err
@@ -225,16 +225,40 @@ func handlerFollowing(s *state, cmd command) error {
 
 	return nil
 }
+func handlerUnfollow(s *state, cmd command, user database.User) error {
+	if len(cmd.arguments) < 1 {
+		return errors.New("please provide url")
+	}
+
+	feed, err := s.DB.GetFeedByURL(context.Background(), cmd.arguments[0])
+
+	if err != nil {
+		return err
+	}
+
+	err = s.DB.DeleteFeedFollow(context.Background(), database.DeleteFeedFollowParams{
+		UserID: user.ID,
+		FeedID: feed.ID,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *commands) registerHandlers() {
 
 	c.availableCommands = map[string]func(s *state, cmd command) error{}
 	c.register("login", handlerLogin)
 	c.register("register", handleRegister)
 	c.register("reset", handleReset)
-	c.register("users", handleGetUsers)
+	c.register("users", middlewareLoggedIn(handleGetUsers))
 	c.register("agg", handlerAgg)
-	c.register("addfeed", handlerAddFeed)
+	c.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	c.register("feeds", handlerFeeds)
-	c.register("follow", handlerFollow)
-	c.register("following", handlerFollowing)
+	c.register("follow", middlewareLoggedIn(handlerFollow))
+	c.register("following", middlewareLoggedIn(handlerFollowing))
+	c.register("unfollow", middlewareLoggedIn(handlerUnfollow))
 }
