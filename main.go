@@ -18,5 +18,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	currentState.Config.Print()
+	//currentState.Config.Print()
 }
