@@ -224,6 +224,7 @@ func handlerFollowing(s *state, cmd command, user database.User) error {
 	return nil
 }
 func handlerUnfollow(s *state, cmd command, user database.User) error {
+
 	if len(cmd.arguments) < 1 {
 		return errors.New("please provide url")
 	}
@@ -246,6 +247,24 @@ func handlerUnfollow(s *state, cmd command, user database.User) error {
 	return nil
 }
 
+func handlerBrowse(s *state, cmd command, user database.User) error {
+
+	posts, err := s.DB.GetPostsByUser(context.Background(), database.GetPostsByUserParams{
+		UserID: user.ID,
+		Limit:  postLimit(cmd),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	for _, post := range posts {
+		fmt.Println(post.Title, post.PublishedAt)
+	}
+
+	return nil
+}
+
 func (c *commands) registerHandlers() {
 
 	c.availableCommands = map[string]func(s *state, cmd command) error{}
@@ -259,4 +278,5 @@ func (c *commands) registerHandlers() {
 	c.register("follow", middlewareLoggedIn(handlerFollow))
 	c.register("following", middlewareLoggedIn(handlerFollowing))
 	c.register("unfollow", middlewareLoggedIn(handlerUnfollow))
+	c.register("browse", middlewareLoggedIn(handlerBrowse))
 }
