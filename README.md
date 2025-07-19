@@ -18,7 +18,7 @@ git clone https://github.com/Waterbootdev/gator.git
 
 ## Create a `.gatorconfig.json` file in your home directotry
 
-```bash
+```json
 {
   "db_url": "postgres://<user_name>:<password>@localhost:5432/gator?sslmode=disable",
 }
