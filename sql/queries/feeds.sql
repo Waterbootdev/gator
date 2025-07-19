@@ -31,7 +31,8 @@ WHERE id = $2;
 -- name: GetNextFeedToFetch :one
 SELECT *
 FROM feeds
-ORDER BY created_at NULLS FIRST
+INNER JOIN feed_follows ON feeds.id = feed_follows.feed_id AND feed_follows.user_id = $1
+ORDER BY last_fetch_at  ASC NULLS FIRST
 LIMIT 1;
 
---
+-- 

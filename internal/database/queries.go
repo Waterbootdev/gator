@@ -9,9 +9,9 @@ import (
 	"github.com/Waterbootdev/gator/internal/feeds"
 )
 
-func (q *Queries) scrapeFeeds() error {
+func (q *Queries) ScrapeFeeds(user User) error {
 
-	feed, err := q.GetNextFeedToFetch(context.Background())
+	feed, err := q.GetNextFeedToFetch(context.Background(), user.ID)
 	if err != nil {
 		return err
 	}
@@ -28,15 +28,18 @@ func (q *Queries) scrapeFeeds() error {
 		return err
 	}
 
-	RSSFeed, err := feeds.FetchFeed(context.Background(), feed.Url)
+	rSSFeed, err := feeds.FetchFeed(context.Background(), feed.Url)
 
 	if err != nil {
 		return err
 	}
 
-	title := RSSFeed.Channel.Title + ":"
+	title := feed.Name + ":"
 
-	for _, item := range RSSFeed.Channel.Item {
+	for _, item := range rSSFeed.Channel.Item {
+		if len(item.Title) == 0 {
+			continue
+		}
 		fmt.Println(title, item.Title)
 	}
 

@@ -20,3 +20,13 @@ DELETE FROM users;
 -- name: GetUsers :many
 SELECT *
 FROM users;
+
+-- name: DeleteUser :exec
+DELETE FROM users
+WHERE name = $1;
+
+-- name: UpdateUser :exec
+UPDATE users
+SET name = $1, updated_at = $2
+WHERE name = $3;
+

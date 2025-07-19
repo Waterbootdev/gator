@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/Waterbootdev/gator/internal/database"
-	"github.com/Waterbootdev/gator/internal/feeds"
 	"github.com/google/uuid"
 )
 
@@ -89,26 +88,25 @@ func handleGetUsers(s *state, _ command, user database.User) error {
 	return nil
 }
 
-func handlerAgg(s *state, cmd command) error {
-	url := "https://www.wagslane.dev/index.xml"
-
-	feed, err := feeds.FetchFeed(context.Background(), url)
-
-	if err != nil {
-		return err
-	}
-	fmt.Println(feed.Channel.Title)
-
-	fmt.Println(feed.Channel.Description)
-
-	for _, item := range feed.Channel.Item {
-		fmt.Println(item.Title)
-		fmt.Println(item.Link)
-		fmt.Println(item.Description)
-		fmt.Println(item.PubDate)
+func handlerAgg(s *state, cmd command, user database.User) error {
+	if len(cmd.arguments) == 0 {
+		return errors.New("please provide a duration")
 	}
 
-	return nil
+	timeBetweenRequests, err := time.ParseDuration(cmd.arguments[0])
+
+	if err != nil || timeBetweenRequests <= 0 {
+		return errors.New("please provide a correct duration")
+	}
+
+	ticker := time.NewTicker(timeBetweenRequests)
+
+	for ; ; <-ticker.C {
+		err := s.DB.ScrapeFeeds(user)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
 }
 
 func handlerAddFeed(s *state, cmd command, user database.User) error {
@@ -170,7 +168,7 @@ func handlerFeeds(s *state, _ command) error {
 	}
 
 	for _, feed := range feeds {
-		fmt.Println(feed.Name, feed.Url, userNames[feed.UserID])
+		fmt.Println(feed.Name, feed.Url, userNames[feed.UserID], feed.LastFetchAt)
 	}
 
 	return nil
@@ -255,7 +253,7 @@ func (c *commands) registerHandlers() {
 	c.register("register", handleRegister)
 	c.register("reset", handleReset)
 	c.register("users", middlewareLoggedIn(handleGetUsers))
-	c.register("agg", handlerAgg)
+	c.register("agg", middlewareLoggedIn(handlerAgg))
 	c.register("addfeed", middlewareLoggedIn(handlerAddFeed))
 	c.register("feeds", handlerFeeds)
 	c.register("follow", middlewareLoggedIn(handlerFollow))
