@@ -12,7 +12,7 @@ Guided Python Project from Boot.dev
 
 ```bash
 
-git clone https://github.com/brinwiththevlin/gator.git
+git clone https://github.com/Waterbootdev/gator.git
 
 ```
 
