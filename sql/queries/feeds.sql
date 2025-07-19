@@ -20,6 +20,18 @@ FROM feeds
 WHERE url = $1
 LIMIT 1;
 
- 
+-- name: DeleteALLFeeds :exec
+DELETE FROM feeds;
 
+-- name: MarkFeedFetched :exec
+UPDATE feeds
+SET last_fetch_at = $1, updated_at = $1
+WHERE id = $2; 
 
+-- name: GetNextFeedToFetch :many
+SELECT *
+FROM feeds
+ORDER BY created_at NULLS FIRST
+LIMIT $1;
+
+--
