@@ -19,14 +19,10 @@ git clone https://github.com/Waterbootdev/gator.git
 ## Create a `.gatorconfig.json` file in your home directotry
 
 ```bash
+
 touch ~/.gatorconfig.json
 
-```json
-{
-    "db_url" : "postgres://<user_name>:<password>@localhost:5432/gator?sslmode=disable"
-}
-
-```json
+"{ "db_url" : "postgres://<user_name>:<password>@localhost:5432/gator?sslmode=disable" }"
 
 ```
 
@@ -36,7 +32,7 @@ touch ~/.gatorconfig.json
 
 cd gator
 
-'''
+```
 
 ## Do a up migration
 
