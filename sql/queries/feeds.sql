@@ -28,10 +28,10 @@ UPDATE feeds
 SET last_fetch_at = $1, updated_at = $1
 WHERE id = $2; 
 
--- name: GetNextFeedToFetch :many
+-- name: GetNextFeedToFetch :one
 SELECT *
 FROM feeds
 ORDER BY created_at NULLS FIRST
-LIMIT $1;
+LIMIT 1;
 
 --
