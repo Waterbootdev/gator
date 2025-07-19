@@ -24,7 +24,6 @@ touch ~/.gatorconfig.json
 ```json
 {
     "db_url" : "postgres://<user_name>:<password>@localhost:5432/gator?sslmode=disable"
-    "current_user_name": <user_name>
 }
 
 ```json
