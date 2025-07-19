@@ -19,11 +19,9 @@ git clone https://github.com/Waterbootdev/gator.git
 ## Create a `.gatorconfig.json` file in your home directotry
 
 ```bash
-
-touch ~/.gatorconfig.json
-
-"{ "db_url" : "postgres://<user_name>:<password>@localhost:5432/gator?sslmode=disable" }"
-
+{
+  "db_url": "postgres://<user_name>:<password>@localhost:5432/gator?sslmode=disable",
+}
 ```
 
 ## Navigate to the project directory
@@ -38,7 +36,7 @@ cd gator
 
 ```bash
 
-goose postgres "postgres://postgres:postgres@localhost:5432/gator" up
+goose postgres "postgres://<user_name>:<password>@localhost:5432/gator" up
 
 ```
 
