@@ -64,7 +64,13 @@ func handleRegister(s *state, cmd command) error {
 }
 
 func handleReset(s *state, _ command) error {
-	return s.DB.DeleteALLUsers(context.Background())
+	err := s.DB.DeleteALLUsers(context.Background())
+	s.Config.SetUser("")
+
+	if err != nil {
+		return err
+	}
+	return err
 }
 
 func handleGetUsers(s *state, _ command, user database.User) error {
